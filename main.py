@@ -19,9 +19,9 @@ def load_messages():
 def save_messages():
     data = {
         "messages": all_messages
-    } # TODO: доделать
-    # https://colab.research.google.com/drive/110dro_DjbcoxzLvt6KLbQSJxzeanlhs3?usp=sharing
-
+    }
+    with open(DB_FILE, "w") as json_file:
+        json.dump(data, json_file)
 
 
 @app.route("/")
@@ -58,23 +58,30 @@ def add_message(sender, text):
     all_messages.append(new_message)
 
 
+@app.route("/message_count")
+def message_count():
+    return f"There's {len(all_messages)} messages in our chat."
+
 @app.route("/send_message")
 def send_message():
     # get sender name and message text
     sender = request.args["name"]
     text = request.args["text"]
-    add_message(sender, text)
+
+    if len(sender) < 3 or len(sender) > 10:
+        add_message("Server", "Длина имени пользователя должна быть от 3 до 10 символов!")
+    else:
+        if len(text) < 3 or len(text) > 3000:
+            add_message("Server", "Длина сообщения должна быть от 3 до 3000 символов!")
+        else:
+            add_message(sender, text)
+
     save_messages()
 
     return "OK"
 
 
 all_messages = load_messages()  # list of all messages
-
-# TODO: remove after first run
-add_message("Andrey", "Всё хорошо")
-add_message("Artur", "Погромче")
-add_message("Поляр", "Много пользователей")
 
 
 app.run()
