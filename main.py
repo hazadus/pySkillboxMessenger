@@ -61,7 +61,8 @@ def add_message(sender, text):
 @app.route("/message_count")
 def message_count():
     return f"There's {len(all_messages)} messages in our chat."
-
+#
+#
 @app.route("/send_message")
 def send_message():
     # get sender name and message text
